@@ -44,13 +44,6 @@ Nsq Client Consume是Golang开发的NSQ和Worker之间的中间件，根据数�
 * 命令行 `curl http://0.0.0.0:19421/status` 输出ok
 * 浏览器打开 http://0.0.0.0:19421/admin
 
-### 快速开始
-
-* [快速体验](document/doc/quick_start.md)
-* [启动参数](document/doc/flag.md)
-* [make命令](document/doc/make.md)
-* [文档](document/doc/README.md)
-
 ## 二次开发
 
 ### 前端
@@ -63,5 +56,3 @@ Nsq Client Consume是Golang开发的NSQ和Worker之间的中间件，根据数�
 * 前段文件转换为一个go文件,执行 `go generate`
 * 编译go服务 `go build`
 * 浏览器打开 http://0.0.0.0:19421/admin
-
-Released under the [MIT License](https://nsq-proxy/blob/main/LICENSE)

@@ -23,27 +23,6 @@ Nsq Client Consume是Golang开发的NSQ和Worker之间的中间件，根据数�
 
 > 启动MySQL
 
-### 安装
-
-#### 二进制安装
-
-* 下载最新版本的压缩包 https://nsq-proxy/releases
-* 解压
-* 启动（注意替换为自己的MySQL信息） `./nsqproxy -dbHost=127.0.0.1 -dbPort=3306 -dbUsername=root -dbPassword=rootpsd -dbName=nsqproxy -logLevel=debug -nsqlookupdHTTP=127.0.0.1:4161`
-* 命令行 `curl http://0.0.0.0:19421/status` 输出ok
-* 浏览器打开 http://0.0.0.0:19421/admin
-
-#### 源码安装
-
-* 要求Go1.13及以上
-* 下载本项目 `go get nsq-proxy`
-* `cd nsqproxy`
-* `export GO111MODULE=on`
-* 编译 `make build`
-* 启动（注意替换为自己的MySQL信息） `./bin/nsqproxy -dbHost=127.0.0.1 -dbPort=3306 -dbUsername=root -dbPassword=rootpsd -dbName=nsqproxy -logLevel=debug -nsqlookupdHTTP=127.0.0.1:4161`
-* 命令行 `curl http://0.0.0.0:19421/status` 输出ok
-* 浏览器打开 http://0.0.0.0:19421/admin
-
 ## 二次开发
 
 ### 前端

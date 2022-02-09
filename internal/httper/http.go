@@ -26,7 +26,7 @@ func NewHttper(addr string) *Httper {
 	}
 }
 
-// 启动HTTP
+// Run 启动HTTP
 func (h *Httper) Run() {
 	h.router()
 	go func() {

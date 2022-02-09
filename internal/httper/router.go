@@ -2,6 +2,7 @@ package httper
 
 import (
 	"net/http"
+
 	"nsq-proxy/config"
 )
 

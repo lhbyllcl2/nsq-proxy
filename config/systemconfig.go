@@ -13,6 +13,7 @@ const NsqProxyVersion = "1.0.0"
 
 const RoleMaster = "master"
 const RoleBackup = "backup"
+const HdSalt = "mF9RdAdQ79BTTg6swL8a"
 
 var SystemConfig = &systemConfig{}
 

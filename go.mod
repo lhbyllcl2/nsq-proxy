@@ -9,6 +9,7 @@ require (
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/nsqio/go-nsq v1.0.8
 	github.com/rakyll/statik v0.1.7
+	github.com/speps/go-hashids/v2 v2.0.1
 	gorm.io/driver/mysql v1.1.1
 	gorm.io/gorm v1.21.9
 )

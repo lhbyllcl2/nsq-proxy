@@ -70,13 +70,10 @@
       <el-table-column label="创建时间" width="180px">
         <template slot-scope="scope">{{ scope.row.createdAt | dateFilter }}</template>
       </el-table-column>
-      <el-table-column label="操作" width="250">
+      <el-table-column label="操作" width="160">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             修改
-          </el-button>
-          <el-button type="primary" size="mini" @click="toWorkPage(row.id)">
-            work机
           </el-button>
           <el-popconfirm
             confirm-button-text="好的"

@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
-    <el-input v-model="search.topic" placeholder="Topic" style="width: 200px;" />
-    <el-select v-model="search.status" placeholder="执行状态" :clearable="clearable" style="margin-left: 10px;">
+    <el-input v-model="search.topic" placeholder="App Id" style="width: 200px;" />
+    <el-select v-model="search.status" placeholder="状态" :clearable="clearable" style="margin-left: 10px;">
       <el-option
         v-for="item in optionsStatus"
         :key="item.value"
@@ -9,16 +9,11 @@
         :value="item.value"
       />
     </el-select>
-    <el-select v-model="search.msgType" placeholder="消息类型" :clearable="clearable" style="margin-left: 10px;">
-      <el-option
-        v-for="item in typeOption"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      />
-    </el-select>
     <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-search" @click="handleSearch">
       搜索
+    </el-button>
+    <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      新增
     </el-button>
     <el-table
       v-loading="listLoading"
@@ -34,77 +29,85 @@
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="消息Id" width="140px">
+      <el-table-column label="名称" width="200px">
         <template slot-scope="scope">
-          {{ scope.row.message_id }}
+          {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column label="Topic" width="100px">
+      <el-table-column label="App Id" width="200px">
         <template slot-scope="scope">
-          {{ scope.row.topic }}
+          {{ scope.row.app_id }}
         </template>
       </el-table-column>
-      <el-table-column label="请求地址" width="280px">
+      <el-table-column label="App Secret" width="auto">
         <template slot-scope="scope">
-          {{ scope.row.url }}
+          {{ scope.row.app_secret }}
         </template>
-      </el-table-column>
-      <el-table-column label="请求方法" width="100px">
-        <template slot-scope="scope">
-          {{ scope.row.method.toUpperCase() }}
-        </template>
-      </el-table-column>
-      <el-table-column label="请求参数">
-        <template slot-scope="scope">
-          <a v-if="scope.row.argument!==''" @click="showParams(scope.row.argument)">点击查看</a>
-          <span v-else>--</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="延时(秒)" width="100px">
-        <template slot-scope="scope">
-          <span>{{ scope.row.delay }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="添加时间" width="160px">
-        <template slot-scope="scope">{{ scope.row.create_at | dateFilter }}</template>
-      </el-table-column>
-      <el-table-column label="执行时间" width="160px">
-        <template slot-scope="scope">{{ scope.row.update_at | dateFilter }}</template>
       </el-table-column>
       <el-table-column label="状态" width="80px">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status===1" type="success">成功</el-tag>
-          <el-tag v-else-if="scope.row.status===0">待执行</el-tag>
-          <el-tag v-else type="danger">失败</el-tag>
+          <el-tag v-if="scope.row.status===1" type="success">正常</el-tag>
+          <el-tag v-else-if="scope.row.status===0" type="error">禁用</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="120px">
+      <el-table-column label="备注" width="200px">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status===2" type="primary" size="mini" @click="reExecute(scope.row.id)">重新执行</el-button>
-          <span v-else>--</span>
+          {{ scope.row.remark }}
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="160px">
+        <template slot-scope="scope">
+          <el-button type="primary" size="mini" @click="reExecute(scope.row.id)">编辑</el-button>
+          <el-popconfirm
+            confirm-button-text="好的"
+            cancel-button-text="不用了"
+            icon="el-icon-info"
+            icon-color="red"
+            title="确定删除吗？"
+            @onConfirm="deleteAction(scope.row.id)"
+          >
+            <el-button slot="reference" type="danger" size="mini" style="margin-left:10px;">
+              删除
+            </el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="search.page" @pagination="getList" />
 
-    <el-dialog :visible.sync="dialogFormVisible" width="500px" top="100px">
-      <json-viewer
-        :value="jsonData"
-        :expand-depth="5"
-        copyable
-        boxed
-        sort
-      />
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="500px" top="100px">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="width: 400px; margin-left:50px;">
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="temp.name" />
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input v-model="temp.remark" type="textarea" />
+        </el-form-item>
+        <el-form-item label="是否有效">
+          <el-radio-group v-model="temp.status">
+            <el-radio :label="1">有效</el-radio>
+            <el-radio :label="0">无效</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+          确认
+        </el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getList } from '@/api/message'
 import Pagination from '@/components/Pagination'
-import JsonViewer from 'vue-json-viewer/ssr'
 import 'vue-json-viewer/style.css'
+import { create, getPlatformList, deleteAction } from '@/api/platform'
+import { update } from '@/api/consume'
 const moment = require('moment')
 
 export default {
@@ -114,43 +117,40 @@ export default {
     }
   },
   components: {
-    Pagination,
-    JsonViewer
+    Pagination
   },
   data() {
     return {
       clearable: true,
-      jsonData: null,
-      typeOption: [
-        {
-          value: 1,
-          label: '实时消息'
-        },
-        {
-          value: 2,
-          label: '延迟消息'
-        }
-      ],
       optionsStatus: [
         {
-          value: 0,
-          label: '待执行'
-        },
-        {
           value: 1,
-          label: '成功'
+          label: '正常'
         },
         {
-          value: 2,
-          label: '失败'
+          value: 0,
+          label: '禁用'
         }
       ],
       search: {
-        topic: null,
+        AppId: null,
         status: null,
-        msgType: null,
         page: 1
       },
+      rules: {
+        topic: [{ required: true, message: '必要选项', trigger: 'blur' }],
+        channel: [{ required: true, message: '必要选项', trigger: 'blur' }]
+      },
+      temp: {
+        name: '',
+        remark: '',
+        status: 1 // 1有效 0无效
+      },
+      textMap: {
+        update: '修改',
+        create: '新增'
+      },
+      dialogStatus: '',
       total: 0,
       list: [],
       listLoading: false,
@@ -164,20 +164,74 @@ export default {
     handleSearch() {
       this.getList()
     },
-    reExecute() {
-      return ''
-    },
-    showParams(jsonData) {
-      this.jsonData = JSON.parse(jsonData)
-      this.dialogFormVisible = true
-    },
     getList() {
       this.listLoading = true
-      getList({ ...this.search }).then(response => {
+      getPlatformList({ ...this.search }).then(response => {
         this.listLoading = false
         this.list = response.result.result
         this.search.page = response.result.page
         this.total = response.result.total
+      })
+    },
+    handleCreate() {
+      this.resetTemp()
+      this.dialogStatus = 'create'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    resetTemp() {
+      this.temp = {
+        name: '',
+        remark: '',
+        status: 1 // 0有效 1无效
+      }
+    },
+    updateData() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          const tempData = Object.assign({}, this.temp)
+          update(tempData).then(() => {
+            this.dialogFormVisible = false
+            this.$notify({
+              title: 'Success',
+              message: '更新成功',
+              type: 'success',
+              duration: 2000
+            })
+            this.getList()
+          })
+        }
+      })
+    },
+    createData() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          console.log(JSON.stringify(this.temp))
+          create(this.temp).then(() => {
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '新增成功',
+              message: '新增成功',
+              type: 'success',
+              duration: 2000
+            })
+            this.getList()
+          })
+        }
+      })
+    },
+    deleteAction(id) {
+      deleteAction({ id }).then(() => {
+        this.dialogFormVisible = false
+        this.$notify({
+          title: '删除成功',
+          message: '删除成功',
+          type: 'success',
+          duration: 2000
+        })
+        this.getList()
       })
     }
   }

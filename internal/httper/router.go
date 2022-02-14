@@ -47,4 +47,9 @@ func (h *Httper) router() {
 	//消息展示
 	ms := NewMessage()
 	http.HandleFunc("/admin/api/message/page", ms.Page)
+	//平台管理
+	pf := NewPlatform()
+	http.HandleFunc("/admin/api/platform/page", pf.Page)
+	http.HandleFunc("/admin/api/platform/create", pf.Create)
+	http.HandleFunc("/admin/api/platform/delete", pf.Delete)
 }

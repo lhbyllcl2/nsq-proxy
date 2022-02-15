@@ -1,19 +1,19 @@
-# Nsq Client Consume
-Nsq Client Consume是Golang开发的NSQ和Worker之间的中间件，根据数据库配置，负责消息转发。Nsq Client Consume启动后，接受NSQD队列内容，然后通过HTTP协议转发给Worker机执行。
+# Nsq proxy
+Nsq proxy是Golang开发的NSQ和Worker之间的中间件，根据数据库配置，负责消息转发。Nsq proxy启动后，通過HTTP接受NSQD队列内容，然后通过HTTP协议转发给Worker机执行。
 
 ## 解决的问题
-
 * 各Topic执行机器可配
 * 各Topic消费速度可配
 * 各Worker机协议可配
-    * HTTP：将消息发送给配好的URL。
+* HTTP：将消息发送给配好的URL。
 * 可视化界面管理
 * 队列积压超出阈值报警
 * 散乱在各处的消费者集中化管理
-* 通过网络分发，无需安装.so等扩展库，因此无需修改线上环境
 
-
-
+## 可视化界面
+![image](assets/images/work.png)
+![image](assets/images/platfrom.png)
+![image](assets/images/msg.png)
 ## 使用
 请先部署好NSQLookupd、NSQd、MySQL
 
